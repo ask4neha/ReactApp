@@ -1,0 +1,990 @@
+Namaste React
+------------------------------------------------------------------------------------------------------------------
+Class 1: Inception - Namaste React LIVE
+
+React is a javascript library and not a framework.
+
+Use CDN Link of react library to use it our code.
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+React Library has a method createElement which takes in 3 arguments
+    1. tag name
+    2. props - object of parameters passed to the tag
+    3. child of tag
+
+Like:
+    const header = React.createElement(
+      "h1",
+      {
+        className: "title",
+        key: "h1",
+      },
+      "Hello world"
+    );
+
+To render this created React Element, we need to pass the element to render function.
+This render function will be provided by createRoot() function, which takes in HTML element on which we need to render
+the React element. We need to use ReactDOM library to use this function, then this function will return us a root
+object attached to the app id in the HTML. Using root when we call a render function with react element as args,
+that React element will be rendered on DOM.
+
+const root = ReactDOM.createRoot(document.getElementById("app"));
+root.render(header);
+
+Role of type attribute in script tag? What options can I use there?
+    Crossorigin
+        Normal script elements pass minimal information to the window.onerror for scripts which do not pass the standard
+         CORS checks. To allow error logging for sites which use a separate domain for static media, use this attribute.
+    Defer
+        This Boolean attribute is set to indicate to a browser that the script is meant to be executed after the
+        document has been parsed, but before firing DOMContentLoaded.
+    Type
+        This attribute indicates the type of script represented.
+        The value of this attribute will be one of the following:
+
+        -> Module
+            This value causes the code to be treated as a JavaScript module. The processing of the script contents is
+            deferred. The charset and defer attributes have no effect. For information on using module, see our
+            JavaScript modules guide. Unlike classic scripts, module scripts require the use of the CORS protocol for
+            cross-origin fetching.
+        -> Importmap
+        This value indicates that the body of the element contains an import map. The import map is a JSON object that
+        developers can use to control how the browser resolves module specifiers when importing JavaScript modules.
+        Attribute is not set (default), an empty string, or a JavaScript MIME type
+    Integrity
+        This attribute contains inline metadata that a user agent can use to verify that a fetched resource has been
+        delivered free of unexpected manipulation
+    Async
+        For classic scripts, if the async attribute is present, then the classic script will be fetched in parallel
+        to parsing and evaluated as soon as it is available. For module scripts, if the async attribute is present
+        then the scripts and all their dependencies will be executed in the defer queue, therefore they will get
+        fetched in parallel to parsing and evaluated as soon as they are available.
+
+Async vs defer:
+If we want to use a script which is dependent on other scripts then using async will not garrentte us that
+scripts will be loaded in sequence and that may break our code. we should use defer in this case.
+
+When we want to load external scripts like Google Analytics, which are modular and independent of our code
+ then we should use async, instead of defer. Otherwise, it is wise to use defer.
+
+CORS(Cross Origin)
+-> Resource sharing between same origin apps is very easy.
+-> Browser does not allow https://akshaysaini.in this domain to communicate with following domains:
+    -> google.com/api/getdata
+    -> api.akshaysaini.in
+    -> akshaysaini.in:5050
+    -> http://akshaysaini.in
+
+Preflight Request:
+-> AKA Options calls
+-> AKA CORS Preflight Request
+-> Before any actual Get or Post call is made by browser to server, browser sends a preflight request,
+-> This request is basically used to check whether this request is safe or not.
+-> When browser make preflight request to server, server then takes the responsibility whether this call
+    is valid or not, and if it's safe then server will add some additional HTTP Headers to response,
+    which will let the client/browser know that this call is safe. Then only the actual call will be made to the server.
+-> It also checks whether server allows request method (get, post, update, delete), allows request headers
+    and origin header. Example:
+
+    OPTIONS /resource/foo
+    Access-Control-Request-Method: DELETE
+    Access-Control-Request-Headers: origin, x-requested-with
+    Origin: https://foo.bar.org
+
+    If server allows DELETE with provided headers and origin, then it return below response:
+
+    HTTP/1.1 204 No Content
+    Connection: keep-alive
+    Access-Control-Allow-Origin: https://foo.bar.org
+    Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE
+    Access-Control-Max-Age: 86400
+
+-> This is how resources are shared between different origins.
+-> Will this happens for each request?
+    No, there are two types of Access Control Mechanism
+        1. Simple Request
+        2. Preflight Request
+-> Some request browser automatically tag them as Simple Request but some of the follow Preflight request based on
+    some criteria.
+
+CSRF
+-> Cross Site Request Forgery
+-> CSRF is an attack that impersonates a trusted user and sends a website unwanted commands.
+    ex: <img src="https://www.example.com/index.php?action=delete&id=123" />
+
+-----------------------------------------------------------------------------------------------------------------
+Class-2: Igniting our App
+
+How to add react into our app:
+
+We have to import the React library in our code by several ways:
+
+1. add react js files from cdn using script tag
+2. add react files using bundler
+
+Bundlers: It is responsible for a lot of things in our app to make it production ready.
+Like:
+It makes our code:
+-> Minified
+-> Optimize code
+-> Tree shaking
+-> remove console log
+
+Some recommended Bundlers available in market:
+-> Webpack
+-> Parcel
+-> Vite
+
+Parcel is a bundler package, that is used to bundle our code and make our app production ready.
+
+Package manager: -> Package repository (NPM/yarn)
+We need NPM package manager to pull parcel package into our code.
+
+For creating package management file in our code, package.json to keep package manager configurations.
+npm init -> will create new package.json file
+
+npm install -D parcel
+
+caret vs tilde
+
+package-lock.json -> will lock the exact version of dependency
+
+Install react package using npm
+npm install -D react
+npm install -D react-dom
+
+How to ignite our app
+
+npx parcel index.html
+
+--------------------------------------------------------------------------------------
+Class-3 : Laying the Foundation
+
+JSX
+    •	It is neither a string nor HTML.
+    •	It is a html-based syntax extension to JavaScript.
+    •	JSX produces React “elements”
+    •	Instead of artificially separating technologies by putting markup and logic in separate files, React separates
+        concerns with loosely coupled units called “components” that contain both.
+    •	After compilation, JSX expressions become regular JavaScript function calls and evaluate to JavaScript objects.
+    •	use quotes to specify string literals as attributes
+    •	use curly braces to embed a JavaScript expression in an attribute
+    •	Babel compiles JSX down to React.createElement() calls and JSX represents Objects.
+        These objects are called “React elements”
+React.createElement vs JSX
+    •	JSX is not a requirement for using React. Using React without JSX is especially convenient when you don’t want
+        to set up compilation in your build environment.
+Behind the Scenes of JSX
+    •	The process through which React updates the DOM is known as Reconciliation.
+        This reconciliation has 2 phases :
+            1.	Render Phase
+            2.	Commit Phase
+    •	The Render phase takes your JSX and turns it into a javascript representation.
+        This is nothing but the VirtualDOM.
+    •	The commit phase is actually taking that representation and applying it to the real DOM.
+        React does batch updates.
+    •	Reconciliation = Render + Diffing occurs in between + Commit.
+
+Babel & parcel role in JSX
+    Bundler
+        A bundler lets you write modular code and bundle it together into small packages to optimise load time.
+        Webpack, Parcel.js, Browerify, FuseBox, Rollup, Vite.js
+    Compiler
+        A compiler lets you write modern JavaScript code that still works in older browsers.
+        There’s only one choice here, and that is Babel. Babel transforms your modern JavaScript code into a form that
+        is compatible with “older” browsers. Fortunately, Parcel comes built-in with a default Babel configuration
+        that uses the babel-env and browserslist.
+
+        https://levelup.gitconnected.com/creating-a-react-app-from-scratch-with-parcel-a35da9b36086
+
+React Components
+    Conceptually, components are like JavaScript functions. They accept arbitrary inputs (called “props”) and return
+    React elements describing what should appear on the screen.
+
+    Props => React Component => React Element/Object
+
+    1. Functional Components
+    2. Composing Components
+
+Babel
+
+	React.createElement => React object => HTML(DOM)
+
+React Components:
+	Functional Components
+	Class based Components
+
+Note:
+		const heading = React.createElement("h1", {}, "Heading");
+
+		const head = (
+		  <div>
+			{heading} //-> heading returns react object
+		  </div>
+		);
+
+-----------------------------------------------------------------------------------
+Class-4: Talk is Cheap, show me the code
+
+For breaking code into components and use it again we have to use something knows as import and export keywords.
+Exporting from module:
+
+	-> Named export: 	Can be multiple
+	-> Default export:  Can only be one
+
+
+Import from module:
+
+	-> Named import: 	Can be multiple
+	-> Default import:  Can only be one
+
+example:
+
+	import Header from './components/Header';
+
+	import {Title} from './components/Header';
+
+	This is not object destructuring.
+
+If it is object destructuring, then we should be able to do this,,,
+
+	import obj from './components/Header'
+
+	const {Title} = obj; //not valid
+
+	obj.Title // not valid
+
+But we can do something like this ->
+
+	import * as Obj from './components/Header';
+
+	Obj.Title
+
+So, React is a default export from react library.
+
+For default imported element should not be necessary to be same name as default export name.
+
+	import Head from './components/Header'; // this will work as Head denotes Header
+
+Also, we can import both together as shown below:
+	import Header, { Title } from "./components/Header";
+Even,
+	import Header, { Title } from "./components/Header.js";
+	import Header, { Title } from "./components/Header.jsx";
+
+We can also do this,
+	import * as XYZ from "./components/Header";
+
+	<XYZ.Header />
+
+same as
+
+	<React.Fragment></React.Fragment>
+----------------------------------------
+
+React uses one way data binding only
+
+--------------------------------------------------------------------------------------------
+class-5/class-6 : Let's get Hooked!
+State variable or React hook
+
+	React creates Virtual dom and to know React that something will change on an event, we attach a hook
+	between data and virtual dom's element. So whenever there is an event triggered, React re-render that
+	part of virtual dom or subtree that has used state variable.
+	
+	React Fiber -> new reconciliation algorithm
+
+	while reconciliation react used diff algorithm to check difference between the virtual DOM's
+	previous state and current state.
+
+	React only watch it's state variables and re-render it in virtual dom.
+	
+useEffect is a React hook that calls when component is rendered.
+	
+useEffect callback function takes a call back function & dependency array.
+and call it at a specific time.
+
+after every rerender useEffect gets called and hence it's callback will be called
+
+useEffect calls when:
+	
+	-> empty dependency array -> once after first render
+	-> dep array [searchTxt] => once after initial render + everytime after render ( my searchTxt changes)
+	-> if we don't pass any dependency -> it will be called after every render.
+	
+Never create any component inside component.
+Never ever write a useState() inside if else. -> react wont like inconsistency. -> react won't know
+    if searchTxt variable will be there or not.
+Never write a useState inside for loop.
+
+
+react gives you useState to create local variable inside your component.
+Never create a useState react variable outside component
+
+Formik -> npm package used to create forms.
+https://developer.mozilla.org/en-US/docs/Web/API/Response/json
+
+-------------------------------------------------------------------------------------------------------
+class-7 - Finding the Path
+
+Don'ts
+-> Do not create component inside another component. -> It will create render issues.
+-> Do not write hooks inside if else statements. -> That will create inconsistency in the state variable.
+-> Never write inside the for loop. -> That will cause multiple variable creation in same name.
+
+Note:
+-> React gives us useState to create local state variable inside our functional component.
+-> Never use useState outside functional component.
+-> You can use several useEffects according to their use case.
+-> Images are always imported as Named import.
+
+Routing:
+
+To create routing of the application, we have to create routing configuration.
+For that we need to use createBrowserRouter() function from react-router-dom package,
+that requires array of objects as routing configuration or paths.
+
+-> Routing configuration object requires following properties:
+    * path: "/" -> It signifies that if we load page from root path what should happen.
+    * element: <AppLayout /> -> pass the tag name that should be load at above path.
+    * errorElement: <Error /> -> pass the error tag that should be loaded in case of error.
+
+-> After creating the routing configuration, it just doesn't work unless we provide it to our app.
+-> To provide the routing configuration create by createBrowserRouter() function to react render() function
+    we need to use RouterProvider component and pass appRouter configuration as props to it.
+-> RouterProvider component is named exported by react-router-dom package.
+
+-> To access the error information in Error functional component, react-router-dom provided us
+    useRouteError() hook.
+
+-> Routing:
+	1. Client side routing
+	2. Server side routing
+
+-> Single Page Application (SPA):
+    To avoid the server side routing and eliminate the server side routing we will use the client side routing.
+
+-> Problem of anchor tag is that, when we click on it, it will reload the whole page, instead of changing the page.
+    It will route at server side and reload the whole page.
+
+-> To create clickable links in page instead of anchor tag that reloads the whole page, react-router-dom package
+    have provided us Link component, which is a named exported component, that takes to="/" path, and
+     internally converts it to anchor tag (because in the end everything has to be converted into something that
+     browser understand) and keeps a track of it, so that whenever it is clicked,
+     Link will navigate to corresponding page.
+
+-> To route the nested paths and load the components specified inside children in a specific place, react-router-dom
+    provided us an Outlet component (Named exported component), using which we can navigate to desired
+    component at specified path.
+
+-> To load the components according to route dynamically we use outlet to fill in with child component.
+    All the children of my component go into the outlet according to route.
+
+-> Outlet tag should be kept inside the element's component tag and all the children paths will be replaced with
+    the child components in place out outlet.
+
+-> When we goto home page from about page, home page renders 2 times.
+    Render -> API call -> Re-Render.
+
+Dynamic Segments/Dynamic Routing:
+-> To use the params from routing path react-route-dom package provided us something known as useParams() hook.
+-> It will help to read dynamic URL params
+
+modular
+reusable
+testable
+readable
+maintainable
+
+-------------------------------------------------------------------------------------
+class-8 - Let's get Classy
+==========================
+
+Routing
+    -> How to make a route? -> react-router-dom
+    -> Learn and try to use various ways to create routers:
+        1. createBrowserRouter (Recommended)
+        2. createHashRouter
+        3. createMemoryRouter
+    -> Nested route inside a route -> Children of children
+    -> To render the nested child, an Outlet is to be created or child tag is need to be added in parent.
+
+    -> If you want to create a route in continuation of parent route, don't add / before it.
+    -> If u add / before a route, it will create a route from root.
+
+    -> Outlet will render that component inside itself, which child component's route is open.
+
+Routing children of children
+	-> parentPath/{path} => localhost:1234/about/profile
+	-> children component always rendered inside outlet and we need to create outlet inside it's parent...
+
+Class based components:
+
+	-> messy
+	-> iff creating new project, recommended not to create class based component...
+	-> non maintainable
+	-> To make a class as react component class and not JS class, we use extends React.Component
+	-> mandatory method to override is -> render() {}
+	-> React watches for the change in props and re-renders the component.
+	-> Just like Functional Component has state, CBC also has it's state.
+
+	-> If we want to access the props inside constructor of CBC, we have to pass the props to super()
+	    else we will not be able to access the props, and we get undefined.
+	    This is because React have not assigned the props to the context (this) inside the constructor,
+	    and even we are able to access the props inside the render method using this (context), this is because
+	    React assigns the props to instance of the class explicitly after initializing it.
+	    see below:
+	    //React under the hood
+        const instance = new DefinedComponent(props);
+        instance.props = props;
+
+	-> we receive props inside `this` keyword.
+	-> we have to do this.props.{prop-name}
+	-> to create state variables in react, we have to create it inside the constructor,
+	    best place to create the state variable, is constructor of class, as the classes are invoked
+	-> do not set state variable without set function else react does not know when to trigger reconciliation
+
+React Life Cycle:
+
+    -> useEffect is the best place to call the API, as it calls after the initial render completes.
+    -> similarly componentDidMount() is the best place to call the API in CBC.
+
+Order in which life cycle hooks of parent and child component will be triggered:
+	Parent - constructor
+	Parent - render 
+	Child - constructor
+	Child - render
+	Child - Component did Mount
+	Parent - Component did Mount
+
+Order in which life cycle hooks of parent and 2 child components will be triggered:
+    Parent - constructor
+	Parent - render
+        First Child - constructor
+        First Child - render
+        Second Child - constructor
+        Second Child - render
+        First Child - Component did Mount
+        Second Child - Component did Mount
+	Parent - Component did Mount
+
+Lifecycle of React class component
+    ->refer-Diagram
+        https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/
+
+->React Render happens in two Phases
+	1. Render phase
+		-> calls constructor
+		-> calls render -> create virtual DOM and ready to put everything on browser
+						-> react batches up everything into one, (that's why if two child component's
+						    constructor is called just after render of first child)
+	2. Commit phase
+		-> React updates DOM & refs
+		-> componentDidMount calls
+	
+componentDidMount will be called after initial render is finished, browser has the 
+---------------------------------------------------------------------------------------------------------------
+Parent Constructor                          ||
+Parent render                               ||
+	First Child constructor                 ||              Render Phase
+	First Child render                      ||
+	Second Child constructor                ||              This is the place where react renders all
+	Second Child render                     ||              the child components at once.
+
+----------------------------------------------------------------------------------------------------------------
+
+	Every child's rendered on DOM           ||              This is the place where browser starts updating DOM
+                                            ||
+	First Child - componentDidMount         ||              Commit Phase
+	Second Child - componentDidMount        ||
+Parent componentDidMount                    ||              <- Best place to make API call
+                                            ||                  as all the rendering and committing is complete.
+----------------------------------------------------------------------------------------------------------------
+
+
+Order in which life cycle hooks of parent and child components with async componentDidMount will be triggered:
+---------------------------------------------------------------------------------------------------------------
+    Parent - constructor                    ||
+	Parent - render                         ||              Render phase
+    Child - constructor                     ||              Mounting Cycle
+    Child - render                          ||
+---------------------------------------------------------------------------------------------------------------
+    DOM is updated                          ||
+	Parent - Component did Mount            ||              Commit Phase
+    json is logged in console               ||              -> calls setState()
+    Child - Component did Mount             ||              -> updates the state -> re-render the child component
+---------------------------------------------------------------------------------------------------------------
+    Child - render                          ||              Updating Cycle
+    Child - componentDidUpdate              ||
+---------------------------------------------------------------------------------------------------------------
+    Parent - unmount                        ||              Unmounting cycle
+    Child - unmount                         ||
+    useEffect - return                      ||              <- unmounting phase in FBC
+---------------------------------------------------------------------------------------------------------------
+due to async added in the componentDidMount of child component,
+it loaded asynchronously and delays the load of it.
+
+-> When componentDidMount will be called -> Once after first render
+-> When componentDidUpdate will be called -> After every render
+
+What that signifies -> It is similar behaviour like useEffect()
+
+Cons of SPA:
+    -> When we define a setInterval of 1 sec in componentDidMount, it will start calling callback after each sec
+    -> Even if we change the route to some other page in SPA, it does not reload and
+        hence setInterval will call even after page change.
+    -> Each time, when we revisit the page that has setInterval, it will trigger new setInterval.
+        So there will be multiple setInterval started running in background, that are killing the performance.
+
+Research Homework:
+Why to use super in constructor?
+Why can I make componentDidMount async and not useEffect async?
+
+-------------------------------------------------------------------------
+class-9 - Optimizing our App
+
+How many times componentDidMount gets called? -> once
+
+How many times componentDidUpdate gets called? -> after every state change or props change
+
+Basically update will be triggered only when something changes
+by something it can be
+    -> setState() called
+    -> new props passed
+    -> forceUpdate() called
+
+When componentDidUnmount called for ? -> for cleanup
+
+Why do we need hooks?
+-> React Hooks uses
+    -> reusability (can be used anywhere in code base)
+    -> readability (don't have to worry about code written inside it)
+    -> maintainability (easy to debug)
+    -> testable (test only individual components)
+    -> modularity (broken down into meaningful pieces or chunks)
+
+-> Keep commonly usable functions in a common file.
+-> That may call as, shared or utils or helper.
+
+Functional component -> It's a function that returns JSX
+
+hooks -> It's a function that does not return JSX but other values
+        useParam - returns object
+        useState - returns array
+        useEffect - returns void
+      -> It can return any value. We can offload any functionality to it.
+      -> we cannot use hooks inside a normal function. It is accessible inside Functional Component.
+
+helper component
+    -> to hold the reusable functions in utils
+
+Custom Hooks
+    useOnline
+    useLoggedIn
+    useLocalStorage
+
+Parcel bundles up the code into 1 JS file, but if our app is very large production level then
+it would be difficult to load the page faster, and it will impact out performance.
+
+We can split the code into multiple logical bundles, which can be load when user browse specific module.
+We should do chunking of the JS files.
+
+Lazy Loading
+    -> Chunking
+    -> Code splitting
+    -> Dynamic Bundling
+    -> Lazy loading
+    -> On Demand Loading
+    -> Dynamic Import
+
+-> We will use lazy() method from react library, which will need a callback that returns dynamically imported component
+
+    -> It fails to load the component and suspends the rendering, as module takes time to load
+    -> It's an SPA. It will not reload, but in second time it has the code loaded in browser and hence it works.
+
+    -> To overcome this error, react give us a component named Suspense from "react" package.
+    -> It will take care of the loading of module and render.
+    -> Suspense component is present in react package, it takes fallback props to which we need to provide fallback JSX
+        to show or component name, such as Shimmer.
+
+Never load the lazy loaded component inside another component.
+---------------------------------------------------------------------------------------------------------------------
+class-10 - Jo dikhta hai vo bikta hai
+=====================================
+
+Tailwind CSS - New and popular CSS framework
+Base Web - Uber uses
+MUI - Material UI - Google
+Ant Design - Alibaba Group
+Chakra UI
+PrimeFlex
+
+Ways to add CSS to our project:
+1. native way - style.css
+2. SCSS and SASS
+3. Inline CSS
+4. CSS Framework/Libraries or Component Libraries
+5. Styled Components
+
+Pros of using libraries:
+1. Reuasability
+2. Consistency
+3. Easy to write
+4. Reduce time
+5. no duplicate css
+6. code is less
+7. Fast development
+8. Easy to debug
+
+Cons of using libraries:
+1. Loss of control
+2. Increased bundle size
+3. Too much classes
+4. High initial learning curve
+5. Readability issues
+
+Tailwind CSS Framework
+    -> CSS on the go (in the same file)
+    -> Reusability
+    -> Less bundle size
+    -> Flexible UI (Customizable UI)
+
+Ways to use tailwind CSS
+    -> CDN links
+    -> NPM package
+        -> 1. Install tailwindcss and postcss
+            -> npm install -D tailwindcss postcss
+            -> npx tailwindcss init
+        -> 2. tailwind.config.js
+            -> to configure the paths which file will contain tailwind classes
+        -> 3. .postcssrc
+            -> post css rc file to enable plugin to recognize tailwindcss while parcel bundling
+        -> 4. add below lines in style.css, to start parcel recognize tailwind css classes.
+            @tailwind base;
+            @tailwind components;
+            @tailwind utilities;
+
+
+-> postcss rc file takes this config and tells our project/parcel, we are using so many css files
+    compile all the css files into style.css file.
+-> Tailwind overrides default css of each tag
+
+-> Box array notation to mention precisely how much i want to provide css in px
+----------------------------------------------------------------------------------------------------
+class-11 - Data is the new Oil
+==============================
+
+Data is the most crucial thing in any production app.
+
+Layers:
+    -> UI layer   - what ever we see on the browser page
+    -> Data layer - holds data required to be show on UI
+
+UI Layer is build with JSX,(Babel is used to convert the JSX into React Objects),
+then React converts it into big object, which is known as Virtual Document Object Model vDOM.
+This V-DOM is used for Reconciliation, which calculates Diff. Diff is between current V-DOM and
+previous V-DOM, then this diff is sync with actual DOM in browser.
+
+JSX -> React object -> vDOM -> Reconciliation (diff between current vDOM and previous copy of vDOM) -> diff is sync
+                                                                                                        with Real DOM
+
+Data is maintained & managed in the Data Layer in UI using
+-> state
+-> props
+
+-> there are more ways to manage data in Data Layer.
+
+-> Main difference between state and props is, If we need a variable which has a scope just within that container
+    or component, that variable is known as state, it is the local variable.
+    Props is the data, we can pass from one component (parent) to another component (child).
+
+-> If we want to pass data from 1 comp to another comp -> we use props
+-> If we want to keep data within a container, then we need a local variable -> we use state
+
+PROPS DRILLING
+-> If we have a state variable in our super parent, and we need props data into grand child component,
+    then we pass the data to child, component by component.
+-> We drill down the component to get the data to child component.
+    (Props Drilling: a situation where data is passed from one component through multiple interdependent
+    components until you get to the component where the data is needed.)
+-> Not a good way, we need to modify all the files to get the props till child.
+-> whenever these props are changed, then every component will be re-rendered through which 
+    these props are been passed to child. Clutters the code. Unnecessary code and variables in our code.
+-> Best way is to shift the control to parent and control the state of all the sections.
+-> But if we create state for each section the to save and change value of each section would be extremely difficult,
+    better way is to save the state of only shown section.
+
+Lifting the state up.
+-> Data needs to be maintainable in proper format so that we don't make it so complicated to handle.
+-> Create or manage state inside parent component instead of child component.
+-> Store only details of the component having state change, instead of storing state of all components.
+
+React Dev Tools
+-> Use React Devtools Chrome Extension to debug the props in a very large production app.
+-> Profiler will help you to record the whole browsing session, and we can track which component took how much time.
+-> Loading time taken by each component.
+
+Various ways to create central state management:
+    1. Custom hooks
+    2. Local storage - Bad way
+    3. MobX
+    4. Context API
+    5. NGRX
+    6. Flux
+    7. Redux
+
+->We can create a global variable, but it won't work as React is not tracking it.
+    Whenever the value of the variable change. It will not reflect on DOM.
+
+React Context
+How to pass the data from children to parent?
+-> Very fewer cases, but has many ways to do so.
+
+-> createContext is a function that creates context, provided by react package, and takes default value
+    as input and returns object of type Context.
+-> useContext is a React hook that takes context name and returns the data from a context, provided by react package
+-> Context is like useState for whole application. We can use context wherever we wish to.
+
+How to use UserContext inside Class based components?
+-> We have to use UserContext.Consumer tag, which takes in JSX of a function with value of userContext as params,
+    and returns the JSX that should be rendered on page.
+
+How to modify the default value of context after making API call?
+-> We can override the default value of context using UserContext.Provider component, by passing this component a props
+    as data object. Whenever useContext modifies, it will modify the props to Provider component and reconciliation
+    triggers everywhere.
+-> We can create different UserContext.Provider with different data for small portion of our app.
+-> React router dom uses context behind the scenes. We can see that inside component
+    tab of react-tools as DataRouter.Provider.
+-> you can give name to  context name by
+    UserContext.displayName = "UserContext"
+    so that React tools can track the component name.
+-> Context is so powerful that, If we update the context from one place, it will get reflected in the
+    lazy loaded component. At the time of lazy component loading the update context value is provided to it.
+-> Data Layer and UI Layer works independently and Data Layer manages all the data, it stays as is, and UI Layer
+    updates the UI Layer and do all the reconciliation, making and rendering of the components -> Virtual DOM.
+
+H.W.
+->Multiple context
+->Nesting of context
+------------------------------------------------------------------------------------------
+Personal Branding
+1. Unique way to represent
+2. Enjoyable
+
+------------------------------------------------------------------------------------------
+class-12 Let's build our store - Redux
+
+Pros:
+1. Central State management.
+2. Any component can modify and any component can read.
+
+Cons:
+1. Use it when you are building large application.
+2. Huge learning curve.
+3. Very complex to initial setup.
+4. Bundler and React/REDUX
+
+-> Redux came up with Redux-toolkit to solve the complexity.
+
+-> state has a local scope
+-> props can be passed on to down components from parent
+-> context is a central place, a big object
+-> store is similar to context, a central place of keeping all the data
+
+-> we can have multiple context, but in React we will have only 1 store.
+
+-> We'll Create diff Slices of our Store
+-> we can have multiple slice inside a store, like cart, user, slice
+-> our component cannot modify our store , -> we need to dispatch an action. like -> add an item.
+-> this action will then call a function(normal JS function) -> this function will then modify our cart.
+-> This normal JS function which updates the state is known as reducer function.
+
+-> onClick => dispatch an action => calls reducer => which updates the store
+-> If we click on the + button, it will dispatch an action, which will call a
+    reducer function, which modifies our slice of redux store.
+
+WRITE CYCLE:
+-> When we click on the + Button, it dispatches an action which calls the reducer function which updates
+    the slice of our redux store.
+
+READ CYCLE:
+-> when we have to read slice of our store, we call the SELECTOR, and it will update my CART.
+
+Selector:
+-> Its a React hook, which selects the slice from out store and return.
+-> cart component has subscribed to the store. When cart slice in the store,
+    it will be automatically modify in the cart UI.
+
+We need a new library:
+
+npm i @reduxjs/toolkit (AKA RTK - Redux TookKit)
+
+npm i react-redux
+
+Why 2 library:
+* redux lib -> manage the store, maintain - core of redux.
+* react-react -> bridge library
+
+We need to create a new store js file, in which we will use configureStore function from @reduxjs/toolkit package.
+To use this store we need a component Provider from react-redux library, and pass the props store as our store.
+
+1. Created a store using configureStore() (function from @reduxjs/toolkit)
+2. Provided my store to app using Provider component from react-redux library. Passed store as props(store) to it.
+3. Created a slice using createSlice(function from @reduxjs/toolkit library). It needs to be passed
+    an object containing following keys:
+    1. name: ""
+    2. initialState: {}
+    3. reducers: {
+            action-name : (state, action) => {
+                    // reducer function.
+                    state = action.payload
+                }
+        }
+4. export default cartSlice.reducer and named export actions;
+5. Put the slice into store using an object:
+    {
+        reducer: {
+            cart: -> default exported reducer from cart slice,
+            user: -> -> default exported reducer from user slice
+        }
+    }
+
+Steps to use the slice in our app:
+1. On click on addItem button from our menu, it should call a function handleAddItem
+2. This function will dispatch an action. for this we need a hook useDispatch from react-redux library.
+    which takes an action name function call with argument as item, that needs to be added in slice.
+    -> dispatch(addItem('Grapes'));
+3. Action should be named import from slice
+    -> import { addItem } from '../store/cartSlice';
+
+
+
+------------------------------------------------------------------------------------------------------
+class-13 Time for the test
+
+Enzyme Testing - Previously used library
+
+React Testing Library (RTL)
+JEST
+
+-> TDD development is best.
+-> selenium testing done by QAs
+
+Different types of testing:
+    1. Manual Testing
+    2. Automation Testing
+        -> Selenium Testing
+        -> E2E testing - covers entire user Journey
+        -> Unit Testing, which is to test only 1 component
+        -> Integration Testing, which is to test multiple components together to check one functionality completely
+
+
+Head less browser
+
+
+npm i -D @testing-library/react
+npm i -D jest
+Steps to setup test:
+
+1. Install React Testing Library
+2. Install Jest
+3. configure Jest
+npx jest --init
+
+no
+use arrow keys
+jsdom
+reports generate yes
+babel as covergae
+automatically - yes
+
+
+√ Choose the test environment that will be used for testing » jsdom (browser-like)
+√ Do you want Jest to add coverage reports? ... yes
+√ Which provider should be used to instrument code for coverage? » babel
+√ Automatically clear mock calls, instances, contexts and results before every test? ... yes
+
+As of Jest 28 "jest-environment-jsdom" is no longer shipped by default, make sure to install it separately
+
+npm i -D jest-environment-jsdom
+
+Dunder here means “Double Under (Underscores)
+
+SyntaxError: Cannot use import statement outside a module
+
+Help from babel to resolve this error
+
+search - Jest babel config
+Configure babel
+
+npm install --save-dev babel-jest @babel/core @babel/preset-env
+
+
+Configure Babel to target your current version of Node by creating a babel.config.js file in the root of your project:
+
+babel.config.js
+module.exports = {
+  presets: [['@babel/preset-env', {targets: {node: 'current'}}]],
+};
+
+Find difference between Javascript and JSON.
+
+.babelrc
+
+"presets": [["@babel/preset-env", {"targets": {"node": "current"}}]]
+
+npm run test
+
+Install RTL
+install jest
+configure jest
+installed jest-environment-jsdom
+create my first test
+configure babel
+wrote expect sum test
+gitignore coverage report
+
+
+Read about jsdom
+
+
+When we try to render our app on browser is by creating Root and then render tag onto root.
+Now similarly we do while testing, we run test cases on jsdom and not on browser
+render function from @testing-library/react, provide us with jsdom on which we can load any component and test.
+
+Error: Support for the experimental syntax 'jsx' isn't currently enabled (5:27):
+Resolution: To solve this we need to configure a new preset
+
+Error: could not find react-redux context value; please ensure the component is wrapped in a <Provider>
+Resolution: Add provider with store to resolve this error
+
+Error: useHref() may be used only in the context of a <Router> component.
+Resolution: Jest is not able to find the Link tags meaning, To resolve we need to pass staticRouter
+Routing will not work without browser, we need to use staticRouter from 'react-router-dom/server'
+
+Error: ReferenceError: fetch is not defined
+Resolution:
+We need to create a mock function definition of fetch by using jest.fn
+As we use jest.fn when we need to write mock function definition so here you are returning the
+data only so you can directly use mockResolvedValue or mockReturnValue
+
+jest.fn(()=>{Promise.resolve()}); -> This will return us readable stream and not the json, but if we need a json
+we have to write like this:
+jest.fn(()=>{Promise.resolve({json: () => Promise.resolve(data)})});
+As when we receive the data, we will do data.json().
+
+To test the shimmer as toBeInTheDocument we need another library: @testing-library/jest-dom
+npm i -D @testing-library/jest-dom
+Just to check if the component is loaded into memory then we can use toBeInTheDocument.
+But it's not a good way to use it.
+
+To wait for data to be load we can use await waitFor(()=>expect(condition)) is fulfilled.
+waitFor is imported by @testing-library/react.
+
+To fire an event we have to use fireEvent object which has all the events, this is provided by @testing-library/react
+using fireEvent we can call change with first argument as the name of tag on which we will fire event,
+and to pass the synthetic event's value we need to pass the second argument as object with target object containing
+value with our input value.
